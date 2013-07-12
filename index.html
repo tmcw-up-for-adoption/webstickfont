@@ -5,8 +5,13 @@
 body {
   font: 10px sans-serif;
   margin:0;
-  text-align:center;
+  width:800px;
+  margin:0 auto;
   padding:0;
+}
+
+select {
+    font-size:80px;
 }
 
 .axis path,
@@ -19,57 +24,89 @@ body {
 path {
     fill:none;
     stroke:#222;
-    stroke-width:10;
+    stroke-width:2;
+}
+
+input {
+    width:800px;
+    display:inline;
+    font-size:30px;
+}
+
+input[type=range] {
+    width:100px;
 }
 
 </style>
+<style id='width'>
+</style>
 <body>
-<script src='http://d3js.org/d3.v3.min.js'></script>
+<h1><a href='https://github.com/tmcw/webstickfont'>webstickfont, stick fonts for the web</a></h1>
+<script src='webstickfont.js'></script>
+<script src='d3.v3.min.js'></script>
 <script>
 
-var width = 600,
-    height = 600;
-
-var x = d3.scale.linear()
-    .domain([0, 2000])
-    .range([-width/2, width/2]);
-
-var y = d3.scale.linear()
-    .domain([-1000, 1000])
-    .range([height/2, -height/2]);
-
-var d2r = Math.PI / 180;
-
-var line = d3.svg.line()
-    .x(function(d) { return x(d[0]); })
-    .y(function(d) { return y(d[1]); })
-
-var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-  .append("g")
-    .attr("transform", "translate(" + 300 + "," + 300 + ")");
-
-var letter = svg.append("g");
-var n = d3.select('body').append("h2");
-
-var i = 0, frame = 500;
 d3.json('font.json').on('load', function(data) {
-    d3.timer(run, frame);
-    run();
-    function run() {
-        if (++i > data.length) i = 0;
-        var l = letter.selectAll('path').data(data[i].data, function(d, i) {
-            return i;
-        });
-        n.text(data[i].name);
-        l.exit().remove();
-        l.enter().append('path');
-        l.transition().attr('d', line);
-        d3.timer(run, frame);
-        return true;
+    var svg = d3.select('body')
+        .append('svg')
+        .attr('width', 800)
+        .attr('height', 400);
+
+    var interp;
+
+    function render() {
+        svg.call(webstickfont()
+            .wrap(800)
+            .typeface(data)
+            .interpolate(interp));
     }
+
+    d3.select('body')
+        .append('input')
+        .property('value', 'hello, world')
+        .on('keyup', function() {
+            svg.datum(this.value);
+            render();
+        });
+
+    d3.select('body')
+        .append('input')
+        .attr('type', 'range')
+        .attr('min', '1')
+        .attr('max', '20')
+        .on('change', function() {
+            d3.select('#width')
+                .text('path { stroke-width: ' + this.value + '; }');
+            render();
+        });
+
+    d3.select('body')
+        .append('select')
+        .on('change', function() {
+            interp = this.value;
+            render();
+        })
+        .selectAll('option')
+        .data([
+          "linear",
+          "linear-closed",
+          "step-before",
+          "step-after",
+          "basis",
+          "basis-open",
+          "basis-closed",
+          "bundle",
+          "cardinal",
+          "cardinal-open",  "cardinal-closed",
+          "monotone"])
+        .enter()
+        .append('option')
+        .text(String);
+
+   svg.datum('hello, world');
+   render();
 }).get();
+
 
 </script>
 
