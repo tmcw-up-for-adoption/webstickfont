@@ -4,7 +4,7 @@
   "description": "",
   "main": "d3.v3.min.js",
   "dependencies": {
-    "cheerio": "~0.12.0"
+    "cheerio": "~0.22.0"
   },
   "devDependencies": {},
   "scripts": {
