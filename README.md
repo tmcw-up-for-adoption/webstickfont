@@ -1,5 +1,7 @@
 # webstickfont
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/tmcw/webstickfont.svg)](https://greenkeeper.io/)
+
 Fonts in userspace.
 
 Fonts are typically complicated and wrapped in abstractions - they're easy to
